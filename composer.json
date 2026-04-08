@@ -1,0 +1,11 @@
+{
+  "name": "simple/wg-ui",
+  "description": "Simple self-hosted WireGuard JSON panel",
+  "type": "project",
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "external_interface": "eth0",
+  "external_ip": "203.0.113.10",
+  "wireguard_interface": "wg0",
+  "wireguard_port": 51820,
+  "wireguard_network": "10.66.66.0/24",
+  "server_public_key": "SERVER_PUBLIC_KEY",
+  "updated_at": "2026-04-08T00:00:00+00:00"
+}

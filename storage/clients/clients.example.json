@@ -1,0 +1,13 @@
+{
+  "clients": [
+    {
+      "name": "test-client",
+      "ip": "10.66.66.2/32",
+      "public_key": "CLIENT_PUBLIC_KEY",
+      "private_key": "CLIENT_PRIVATE_KEY",
+      "preshared_key": "CLIENT_PSK",
+      "blocked": false,
+      "created_at": "2026-04-08T00:00:00+00:00"
+    }
+  ]
+}
