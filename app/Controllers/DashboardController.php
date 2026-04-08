@@ -70,9 +70,9 @@ final class DashboardController
     public function downloadConfig(string $name): void
     {
         $safe = preg_replace('/[^a-zA-Z0-9_-]/', '', $name);
-        $path = '/etc/wireguard/clients/' . $safe . '.conf';
+        $result = $this->wg->getClientConfig($safe);
 
-        if (!is_file($path)) {
+        if (!$result['ok']) {
             http_response_code(404);
             echo 'Config not found';
             return;
@@ -80,21 +80,20 @@ final class DashboardController
 
         header('Content-Type: text/plain');
         header('Content-Disposition: attachment; filename="' . $safe . '.conf"');
-        readfile($path);
+        echo $result['output'] . PHP_EOL;
     }
 
     public function showQr(string $name): void
     {
         $safe = preg_replace('/[^a-zA-Z0-9_-]/', '', $name);
-        $file = '/etc/wireguard/clients/' . $safe . '.conf';
-        if (!is_file($file)) {
+        $result = $this->wg->getClientQr($safe);
+
+        if (!$result['ok']) {
             http_response_code(404);
             echo 'Config not found';
             return;
         }
 
-        $cmd = 'qrencode -t ANSIUTF8 < ' . escapeshellarg($file) . ' 2>/dev/null';
-        $qr = shell_exec($cmd) ?: 'Не удалось сгенерировать QR.';
-        render('qr', ['name' => $safe, 'qr' => $qr]);
+        render('qr', ['name' => $safe, 'qr' => $result['output'] ?: 'Не удалось сгенерировать QR.']);
     }
 }

@@ -16,6 +16,12 @@ STATE_JSON="${PANEL_ROOT}/storage/state/system.json"
 
 log(){ echo "[wireguard] $*"; }
 
+
+fix_storage_permissions(){
+  chown root:www-data "${CLIENTS_JSON}" "${STATE_JSON}" 2>/dev/null || true
+  chmod 664 "${CLIENTS_JSON}" "${STATE_JSON}" 2>/dev/null || true
+}
+
 ensure_dirs(){
   mkdir -p /etc/wireguard "${WG_CLIENTS_DIR}" "${PANEL_ROOT}/storage/clients" "${PANEL_ROOT}/storage/state" "${PANEL_ROOT}/storage/logs"
   chmod 700 /etc/wireguard
@@ -34,6 +40,7 @@ save_client_json(){
   jq --arg n "$name" --arg ip "$ip" --arg pub "$pub" --arg priv "$priv" --arg psk "$psk" --argjson blocked "$blocked" '
     .clients += [{name:$n, ip:$ip, public_key:$pub, private_key:$priv, preshared_key:$psk, blocked:$blocked, created_at:now|todate}]' "${CLIENTS_JSON}" > "$tmp"
   mv "$tmp" "${CLIENTS_JSON}"
+  fix_storage_permissions
 }
 
 rebuild_server_conf(){
@@ -72,6 +79,7 @@ PEER
   chmod 600 "/etc/wireguard/${WG_IFACE}.conf"
   jq --arg pub "$server_public" --arg ip "$ext_ip" '.server_public_key=$pub | .external_ip=$ip' "${STATE_JSON}" > "${STATE_JSON}.tmp"
   mv "${STATE_JSON}.tmp" "${STATE_JSON}"
+  fix_storage_permissions
 }
 
 add_client(){
@@ -117,6 +125,7 @@ delete_client(){
   tmp="$(mktemp)"
   jq --arg n "$name" '.clients |= map(select(.name != $n))' "${CLIENTS_JSON}" > "$tmp"
   mv "$tmp" "${CLIENTS_JSON}"
+  fix_storage_permissions
   rm -f "${WG_CLIENTS_DIR}/${name}.conf"
   rebuild_server_conf
   systemctl restart "wg-quick@${WG_IFACE}"
@@ -127,6 +136,7 @@ set_block(){
   tmp="$(mktemp)"
   jq --arg n "$name" --argjson b "$blocked" '.clients |= map(if .name == $n then .blocked = $b else . end)' "${CLIENTS_JSON}" > "$tmp"
   mv "$tmp" "${CLIENTS_JSON}"
+  fix_storage_permissions
   rebuild_server_conf
   systemctl restart "wg-quick@${WG_IFACE}"
 }
@@ -139,6 +149,7 @@ install_base(){
   if [[ ! -f "${CLIENTS_JSON}" ]]; then
     echo '{"clients":[]}' > "${CLIENTS_JSON}"
   fi
+  fix_storage_permissions
 
   local ext_if ext_ip
   ext_if="$(ip route get 1.1.1.1 | awk '{for(i=1;i<=NF;i++) if ($i=="dev") {print $(i+1); exit}}')"
@@ -157,6 +168,7 @@ install_base(){
   "updated_at": "$(date -Iseconds)"
 }
 JSON
+  fix_storage_permissions
 
   log "Enable IP forwarding"
   cat > /etc/sysctl.d/99-wireguard-forward.conf <<SYS
@@ -176,7 +188,7 @@ SYS
 
 usage(){
   cat <<TXT
-Usage: $0 {install|rebuild|add-client|delete-client|block-client|unblock-client}
+Usage: $0 {install|rebuild|add-client|delete-client|block-client|unblock-client|show-config|show-qr}
 TXT
 }
 
@@ -189,5 +201,7 @@ case "${1:-}" in
   delete-client) delete_client "${2:-}" ;;
   block-client) set_block "${2:-}" true ;;
   unblock-client) set_block "${2:-}" false ;;
+  show-config) cat "${WG_CLIENTS_DIR}/${2:-}.conf" ;;
+  show-qr) qrencode -t ANSIUTF8 < "${WG_CLIENTS_DIR}/${2:-}.conf" ;;
   *) usage; exit 1 ;;
 esac

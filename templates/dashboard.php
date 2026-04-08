@@ -5,20 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WireGuard Panel</title>
     <style>
-        body{font-family:Inter,Arial,sans-serif;background:#f1f5f9;margin:0;color:#0f172a}
-        .wrap{max-width:1200px;margin:24px auto;padding:0 16px}
-        .card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 4px 12px rgba(15,23,42,.08);margin-bottom:16px}
+        :root{--bg:#eef6ff;--card:#ffffff;--line:#d6e8ff;--text:#25466f;--primary:#6da8ff;--primary-dark:#4a8ff5;--muted:#6d8cad}
+        body{font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#eaf4ff 0%,#f4f9ff 100%);margin:0;color:var(--text)}
+        .wrap{max-width:1220px;margin:24px auto;padding:0 16px}
+        .card{background:var(--card);border-radius:14px;padding:16px;box-shadow:0 10px 24px rgba(109,168,255,.16);margin-bottom:16px;border:1px solid var(--line)}
         .top{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
-        .badge{padding:6px 10px;border-radius:999px;background:#e2e8f0;font-size:12px}
+        .badge{padding:6px 12px;border-radius:999px;background:#edf5ff;border:1px solid var(--line);font-size:12px;color:#37608f}
         table{width:100%;border-collapse:collapse}
-        th,td{padding:10px;border-bottom:1px solid #e2e8f0;font-size:14px;text-align:left;vertical-align:top}
+        th,td{padding:10px;border-bottom:1px solid #e5f0ff;font-size:14px;text-align:left;vertical-align:top}
+        th{color:#4f7096}
         .actions form,.actions a{display:inline-block;margin:2px}
-        button,.btn{padding:8px 10px;border:none;border-radius:8px;background:#1d4ed8;color:#fff;text-decoration:none;cursor:pointer;font-size:12px}
-        .btn.gray,button.gray{background:#475569}
-        .btn.red,button.red{background:#b91c1c}
-        .status-online{color:#166534;font-weight:700}.status-offline{color:#9a3412;font-weight:700}.status-blocked{color:#991b1b;font-weight:700}
-        .flash{padding:10px;border-radius:8px;background:#dbeafe;margin-bottom:12px}
-        input[type=text]{padding:8px;border:1px solid #cbd5e1;border-radius:8px}
+        button,.btn{padding:8px 10px;border:none;border-radius:9px;background:var(--primary);color:#fff;text-decoration:none;cursor:pointer;font-size:12px}
+        .btn:hover,button:hover{background:var(--primary-dark)}
+        .btn.gray,button.gray{background:#8db7ee}.btn.gray:hover,button.gray:hover{background:#79a8e8}
+        .btn.red,button.red{background:#f290aa}.btn.red:hover,button.red:hover{background:#ea6e8f}
+        .status-online{color:#1f8f66;font-weight:700}.status-offline{color:#b8801e;font-weight:700}.status-blocked{color:#d2597c;font-weight:700}
+        .flash{padding:10px;border-radius:9px;background:#ebf5ff;margin-bottom:12px;color:#2e5f93;border:1px solid #d1e7ff}
+        input[type=text]{padding:9px;border:1px solid var(--line);border-radius:9px;background:#f8fbff;color:var(--text)}
     </style>
 </head>
 <body>

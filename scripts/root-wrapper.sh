@@ -21,7 +21,7 @@ case "${1:-}" in
   reboot)
     systemctl reboot
     ;;
-  add-client|delete-client|block-client|unblock-client)
+  add-client|delete-client|block-client|unblock-client|show-config|show-qr)
     safe_name "${2:-}" || { echo "invalid client name"; exit 1; }
     "$WIREGUARD_SCRIPT" "$1" "$2"
     ;;
@@ -30,7 +30,7 @@ case "${1:-}" in
     systemctl restart "wg-quick@${WG_IFACE}"
     ;;
   *)
-    echo "Allowed: rebuild|restart|status|service-status|reboot|add-client|delete-client|block-client|unblock-client"
+    echo "Allowed: rebuild|restart|status|service-status|reboot|add-client|delete-client|block-client|unblock-client|show-config|show-qr"
     exit 1
     ;;
 esac

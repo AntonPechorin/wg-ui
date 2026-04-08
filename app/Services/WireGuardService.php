@@ -99,6 +99,17 @@ final class WireGuardService
         return $result['ok'] ? trim($result['output']) : 'unknown';
     }
 
+    public function getClientConfig(string $name): array
+    {
+        return $this->root->run('show-config', [$name]);
+    }
+
+    public function getClientQr(string $name): array
+    {
+        return $this->root->run('show-qr', [$name]);
+    }
+
+
     private function humanBytes(int $bytes): string
     {
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
