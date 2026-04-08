@@ -62,6 +62,8 @@ wget https://raw.githubusercontent.com/<you>/<repo>/main/install.sh -O install.s
 - `jq`
 - `rsync`
 - `openssl`
+- `iptables`
+- `ca-certificates`
 
 ---
 

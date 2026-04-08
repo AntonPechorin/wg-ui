@@ -56,8 +56,8 @@ Address = ${WG_SERVER_IP}
 ListenPort = ${WG_PORT}
 PrivateKey = ${server_private}
 SaveConfig = false
-PostUp = iptables -A FORWARD -i ${WG_IFACE} -j ACCEPT; iptables -A FORWARD -o ${WG_IFACE} -j ACCEPT; iptables -t nat -A POSTROUTING -o ${ext_if} -j MASQUERADE
-PostDown = iptables -D FORWARD -i ${WG_IFACE} -j ACCEPT; iptables -D FORWARD -o ${WG_IFACE} -j ACCEPT; iptables -t nat -D POSTROUTING -o ${ext_if} -j MASQUERADE
+PostUp = iptables -C FORWARD -i ${WG_IFACE} -j ACCEPT || iptables -A FORWARD -i ${WG_IFACE} -j ACCEPT; iptables -C FORWARD -o ${WG_IFACE} -j ACCEPT || iptables -A FORWARD -o ${WG_IFACE} -j ACCEPT; iptables -t nat -C POSTROUTING -o ${ext_if} -j MASQUERADE || iptables -t nat -A POSTROUTING -o ${ext_if} -j MASQUERADE
+PostDown = iptables -C FORWARD -i ${WG_IFACE} -j ACCEPT && iptables -D FORWARD -i ${WG_IFACE} -j ACCEPT || true; iptables -C FORWARD -o ${WG_IFACE} -j ACCEPT && iptables -D FORWARD -o ${WG_IFACE} -j ACCEPT || true; iptables -t nat -C POSTROUTING -o ${ext_if} -j MASQUERADE && iptables -t nat -D POSTROUTING -o ${ext_if} -j MASQUERADE || true
 CONF
 
   jq -c '.clients[]' "${CLIENTS_JSON}" | while read -r row; do
@@ -90,9 +90,8 @@ add_client(){
     echo "Client exists"; exit 1
   fi
 
-  local server_public server_ip client_ip client_private client_public psk endpoint
+  local server_public client_ip client_private client_public psk endpoint
   server_public="$(cat /etc/wireguard/server_public.key)"
-  server_ip="$(echo "${WG_SERVER_IP}" | cut -d'/' -f1)"
   client_ip="$(calc_client_ip)"
   endpoint="$(jq -r '.external_ip' "${STATE_JSON}"):${WG_PORT}"
 
@@ -153,6 +152,10 @@ install_base(){
 
   local ext_if ext_ip
   ext_if="$(ip route get 1.1.1.1 | awk '{for(i=1;i<=NF;i++) if ($i=="dev") {print $(i+1); exit}}')"
+  if [[ -z "$ext_if" ]]; then
+    echo "Unable to detect external interface" >&2
+    exit 1
+  fi
   ext_ip="$(curl -4fsS https://api.ipify.org || true)"
   if [[ -z "$ext_ip" ]]; then
     ext_ip="$(ip -4 addr show "$ext_if" | awk '/inet /{print $2}' | cut -d/ -f1 | head -n1)"
@@ -175,11 +178,17 @@ JSON
 net.ipv4.ip_forward=1
 net.ipv6.conf.all.forwarding=1
 SYS
-  sysctl --system >/dev/null
+  sysctl -p /etc/sysctl.d/99-wireguard-forward.conf >/dev/null
 
+  modprobe wireguard 2>/dev/null || true
   rebuild_server_conf
 
   systemctl enable "wg-quick@${WG_IFACE}" --now
+  if ! systemctl is-active --quiet "wg-quick@${WG_IFACE}"; then
+    echo "wg-quick failed to start. Recent logs:" >&2
+    journalctl -u "wg-quick@${WG_IFACE}" -n 40 --no-pager >&2 || true
+    exit 1
+  fi
 
   if ! jq -e '.clients[] | select(.name=="test-client")' "${CLIENTS_JSON}" >/dev/null; then
     add_client "test-client"
