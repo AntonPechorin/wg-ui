@@ -150,9 +150,42 @@ if [[ -n "$DOMAIN" && -n "$EMAIL" ]]; then
 else
   install -d -m 700 /etc/nginx/ssl
   openssl req -x509 -nodes -newkey rsa:2048 -keyout /etc/nginx/ssl/wg-panel.key -out /etc/nginx/ssl/wg-panel.crt -days 825 -subj "/CN=${SERVER_ADDRESS}"
-  cat >/etc/nginx/snippets/wg-panel-ssl.conf <<EOF
-ssl_certificate /etc/nginx/ssl/wg-panel.crt;
-ssl_certificate_key /etc/nginx/ssl/wg-panel.key;
+  cat >/etc/nginx/sites-available/wg-panel.conf <<EOF
+server {
+  listen 80;
+  listen [::]:80;
+  server_name _;
+  return 301 https://\$host\$request_uri;
+}
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  server_name _;
+  root /opt/wg-panel/public;
+  index index.php;
+
+  ssl_certificate /etc/nginx/ssl/wg-panel.crt;
+  ssl_certificate_key /etc/nginx/ssl/wg-panel.key;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_session_timeout 1d;
+  ssl_session_cache shared:SSL:10m;
+  ssl_prefer_server_ciphers off;
+
+  location / {
+    try_files \$uri /index.php?\$query_string;
+  }
+
+  location ~ \.php$ {
+    include snippets/fastcgi-php.conf;
+    fastcgi_pass unix:${PHP_SOCK};
+    fastcgi_param SCRIPT_FILENAME \$realpath_root\$fastcgi_script_name;
+  }
+
+  location ~ /\. {
+    deny all;
+  }
+}
 EOF
 fi
 

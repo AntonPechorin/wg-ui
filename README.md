@@ -113,6 +113,20 @@ scripts/panel-install.sh --domain panel.example.com --email admin@example.com --
 '
 ```
 
+### 4.3 Доступ в админку только по IP (без домена)
+
+Да, домен не обязателен. Можно поставить панель и заходить по IP.
+
+```bash
+sudo bash -lc '
+set -e
+cd /path/to/wg-ui
+scripts/panel-install.sh --wg-interface wg0 --wg-port 51820 --vpn-cidr 10.77.0.0/24 --server-address 203.0.113.10 --listen-ip 0.0.0.0 --enable-root-wrapper true
+'
+```
+
+В этом режиме installer выпустит self-signed сертификат и поднимет HTTPS на `443`, а HTTP `80` будет редиректить на HTTPS.
+
 ---
 
 ## 5) Пошаговый запуск
@@ -296,6 +310,9 @@ sudo fail2ban-client status
 
 5. **Нет handshake у клиента**
    - Проверить endpoint/порт, firewall на сервере и NAT на внешнем интерфейсе.
+
+6. **Браузер ругается на сертификат при входе по IP**
+   - Это ожидаемо для self-signed TLS. Добавьте исключение в браузере или используйте домен + Let's Encrypt.
 
 ---
 
