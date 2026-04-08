@@ -1,0 +1,9 @@
+/vendor/
+/storage/clients/*.conf
+/storage/cache/*
+/storage/sessions/*
+/storage/tmp/*
+/storage/locks/*
+/storage/backups/*
+/storage/logs/*.log
+storage/logs/*.jsonl

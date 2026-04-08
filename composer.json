@@ -1,0 +1,13 @@
+{
+  "name": "wg/panel",
+  "description": "Simple self-hosted WireGuard panel without DB",
+  "type": "project",
+  "require": {
+    "php": ">=8.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "interface": "wg0",
+  "listen_port": 51820,
+  "vpn_cidr": "10.77.0.0/24",
+  "server_address": "203.0.113.10",
+  "endpoint": "203.0.113.10:51820",
+  "external_iface": "eth0",
+  "public_key": "",
+  "private_key": ""
+}
