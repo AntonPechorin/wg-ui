@@ -1,0 +1,10 @@
+www-data ALL=(root) NOPASSWD: /usr/local/bin/wg-panel-root-wrapper.sh restart
+www-data ALL=(root) NOPASSWD: /usr/local/bin/wg-panel-root-wrapper.sh status
+www-data ALL=(root) NOPASSWD: /usr/local/bin/wg-panel-root-wrapper.sh service-status
+www-data ALL=(root) NOPASSWD: /usr/local/bin/wg-panel-root-wrapper.sh add-client *
+www-data ALL=(root) NOPASSWD: /usr/local/bin/wg-panel-root-wrapper.sh delete-client *
+www-data ALL=(root) NOPASSWD: /usr/local/bin/wg-panel-root-wrapper.sh block-client *
+www-data ALL=(root) NOPASSWD: /usr/local/bin/wg-panel-root-wrapper.sh unblock-client *
+www-data ALL=(root) NOPASSWD: /usr/local/bin/wg-panel-root-wrapper.sh show-config *
+www-data ALL=(root) NOPASSWD: /usr/local/bin/wg-panel-root-wrapper.sh show-qr *
+www-data ALL=(root) NOPASSWD: /usr/local/bin/wg-panel-root-wrapper.sh reboot

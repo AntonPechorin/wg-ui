@@ -1,0 +1,5 @@
+{
+  "login": "admin",
+  "password_hash": "$2y$10$replace_me",
+  "created_at": "2026-04-08T00:00:00+00:00"
+}
