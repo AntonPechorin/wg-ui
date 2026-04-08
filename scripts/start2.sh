@@ -1,0 +1,1 @@
+panel-install.sh

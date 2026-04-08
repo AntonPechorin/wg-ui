@@ -1,0 +1,7 @@
+{
+  "domain": "",
+  "email": "",
+  "listen_ip": "0.0.0.0",
+  "ssh_port": "22",
+  "enable_root_wrapper": "true"
+}

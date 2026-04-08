@@ -1,0 +1,14 @@
+body{font-family:Inter,Arial,sans-serif;background:#0b1020;color:#e9ecf1;margin:0}
+.nav{padding:12px 24px;background:#121a32;display:flex;gap:14px;align-items:center}
+.nav a{color:#d6def9;text-decoration:none}
+.nav button{background:#223056;color:#fff;border:0;padding:8px 12px;border-radius:8px}
+.container{padding:24px;max-width:1200px;margin:auto}
+.card{background:#141d38;border:1px solid #253255;border-radius:12px;padding:16px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+input,button{padding:10px;border-radius:8px;border:1px solid #2f3c64;background:#0e1630;color:#e9ecf1}
+button{cursor:pointer;background:#2d62ff;border:0}
+.inline-form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #2a3557;text-align:left;font-size:14px}
+.auth{max-width:360px;margin:64px auto}
+.error{background:#5d1f24;padding:8px;border-radius:8px;margin:8px 0}

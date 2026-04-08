@@ -1,0 +1,6 @@
+{
+  "login": "admin",
+  "password_hash": "$2y$10$replace_me",
+  "created_at": "1970-01-01T00:00:00Z",
+  "must_change_password": true
+}

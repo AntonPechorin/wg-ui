@@ -1,0 +1,9 @@
+[Unit]
+Description=WG Panel maintenance cleanup
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/wg-panel
+ExecStart=/usr/bin/find /opt/wg-panel/storage/tmp -type f -mmin +120 -delete
